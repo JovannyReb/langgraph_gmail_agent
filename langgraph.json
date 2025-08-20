@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/langchain-ai/langgraph/main/langgraph.schema.json",
+  "env": ".env",
+  "python_path": ["src"],
+  "dependencies": [
+    "langgraph>=0.4.2",
+    "langchain>=0.3.9",
+    "langchain-core>=0.3.59",
+    "langchain-openai",
+    "python-dotenv"
+  ],
+  "graphs": {
+    "email-assistant": "email_assistant.email_assistant:email_assistant"
+  }
+}

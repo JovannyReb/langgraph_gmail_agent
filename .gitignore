@@ -1,0 +1,12 @@
+.env
+.env.*
+secrets/
+**/.secrets/
+**/client_secret*.json
+**/token*.json
+notebooks/*.ipynb_checkpoints/
+notebooks/token.pickle
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
