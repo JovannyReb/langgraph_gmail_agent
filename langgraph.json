@@ -10,6 +10,7 @@
     "python-dotenv"
   ],
   "graphs": {
-    "email-assistant-hitl": "email_assistant.email_assistant_hitl:email_assistant"
+    "email-assistant-hitl": "email_assistant.email_assistant_hitl:email_assistant",
+    "email-assistant-gmail": "email_assistant.gmail_agent:email_assistant"
   }
 }

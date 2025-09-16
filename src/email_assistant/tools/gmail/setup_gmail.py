@@ -13,6 +13,7 @@ import os
 import sys
 import json
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Add project root to sys.path for imports to work correctly
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../")))
@@ -23,17 +24,31 @@ from google.oauth2.credentials import Credentials
 
 def main():
     """Run Gmail authentication setup."""
+    # Load environment variables from .env if present
+    load_dotenv()
     # Create .secrets directory
     secrets_dir = Path(__file__).parent.absolute() / ".secrets"
     secrets_dir.mkdir(parents=True, exist_ok=True)
     
-    # Check for secrets.json
+    # Check for secrets.json or GMAIL_SECRET env var and materialize if present
     secrets_path = secrets_dir / "secrets.json"
     if not secrets_path.exists():
-        print(f"Error: Client secrets file not found at {secrets_path}")
-        print("Please download your OAuth client ID JSON from Google Cloud Console")
-        print("and save it as .secrets/secrets.json")
-        return 1
+        gmail_secret_env = os.getenv("GMAIL_SECRET")
+        if gmail_secret_env:
+            try:
+                # Accept both raw JSON string or already-parsed JSON via shell export
+                secret_obj = json.loads(gmail_secret_env) if isinstance(gmail_secret_env, str) else gmail_secret_env
+                with open(secrets_path, "w") as f:
+                    json.dump(secret_obj, f)
+                print(f"Wrote GMAIL_SECRET from environment to {secrets_path}")
+            except Exception as e:
+                print(f"Failed to parse GMAIL_SECRET. Ensure it is a JSON object. Error: {str(e)}")
+                return 1
+        else:
+            print(f"Error: Client secrets file not found at {secrets_path}")
+            print("Either set GMAIL_SECRET in your environment/.env with the JSON client, or")
+            print("download your OAuth client ID JSON from Google Cloud Console and save it as .secrets/secrets.json")
+            return 1
     
     print("Starting Gmail API authentication flow...")
     print("A browser window will open for you to authorize access.")
@@ -78,6 +93,7 @@ def main():
             
         print("\nAuthentication successful!")
         print(f"Access token stored at {token_path}")
+        print("You can also set GMAIL_TOKEN in your environment to the contents of this token.json if deploying.")
         return 0
     except Exception as e:
         print(f"Authentication failed: {str(e)}")
